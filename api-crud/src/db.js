@@ -11,3 +11,8 @@ export const pool = new Pool({
     rejectUnauthorized: false,
   },
 });
+
+// 👇 AGREGA ESTO
+pool.connect()
+  .then(() => console.log("BD conectada"))
+  .catch(err => console.error("Error BD:", err));
