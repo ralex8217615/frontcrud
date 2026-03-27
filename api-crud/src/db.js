@@ -6,13 +6,12 @@ dotenv.config();
 const { Pool } = pkg;
 
 export const pool = new Pool({
-  connectionString: process.env.DATABASE_URL,
+  connectionString: process.env.DATABASE_URL, 
   ssl: {
-    rejectUnauthorized: false,
+    rejectUnauthorized: false, 
   },
 });
 
-
 pool.connect()
-  .then(() => console.log("BD conectada"))
-  .catch(err => console.error("Error BD:", err));
+  .then(() => console.log("CONEXIÓN EXITOSA A POSTGRES"))
+  .catch(err => console.error("ERROR DE CONEXIÓN:", err.message));
