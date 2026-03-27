@@ -6,7 +6,7 @@ import BaseAlerta from "../components/BaseAlerta";
 const API = "https://ultimo-nj94.onrender.com/api/plantas";
 
 export default function Crud() {
-  const [plantas, setPlantas] = useState([]);
+  const [plantas, setPlantas] = useState([]); 
   const [modalVisible, setModalVisible] = useState(false);
   const [alertaVisible, setAlertaVisible] = useState(false);
   const [plantaActual, setPlantaActual] = useState({
@@ -16,15 +16,23 @@ export default function Crud() {
     descripcion: ""
   });
 
-  //get
+  // GET 
   const obtenerPlantas = async () => {
     try {
       const res = await fetch(API);
       const data = await res.json();
-      console.log("DATA", data);
-      setPlantas(data);
+      
+      console.log("DATA recibida:", data);
+
+      if (Array.isArray(data)) {
+        setPlantas(data);
+      } else {
+        console.error("El servidor mandó un error, no una lista:", data);
+        setPlantas([]); 
+      }
     } catch (error) {
       console.error("Error al obtener plantas:", error);
+      setPlantas([]); 
     }
   };
 
@@ -39,42 +47,42 @@ export default function Crud() {
     { label: "Descripción", key: "descripcion" }
   ];
 
-  // post put
+  // POST / PUT
   const guardarPlanta = async () => {
     try {
-      if (plantaActual.id) {
-        await fetch(`${API}/${plantaActual.id}`, {
-          method: "PUT",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(plantaActual)
-        });
+      const config = {
+        method: plantaActual.id ? "PUT" : "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify(plantaActual)
+      };
+
+      const url = plantaActual.id ? `${API}/${plantaActual.id}` : API;
+      
+      const res = await fetch(url, config);
+      
+      if (res.ok) {
+        await obtenerPlantas();
+        setModalVisible(false);
+        setPlantaActual({ id: null, nombre: "", dificultad: "", descripcion: "" });
       } else {
-        await fetch(API, {
-          method: "POST",
-          headers: { "Content-Type": "application/json" },
-          body: JSON.stringify(plantaActual)
-        });
+        alert("Error al guardar en el servidor");
       }
-
-      await obtenerPlantas();
-      setModalVisible(false);
-      setPlantaActual({ id: null, nombre: "", dificultad: "", descripcion: "" });
-
     } catch (error) {
       console.error("Error al guardar:", error);
     }
   };
 
-  // delete
+  // DELETE
   const eliminarPlanta = async () => {
     try {
-      await fetch(`${API}/${plantaActual.id}`, {
+      const res = await fetch(`${API}/${plantaActual.id}`, {
         method: "DELETE"
       });
 
-      await obtenerPlantas();
-      setAlertaVisible(false);
-
+      if (res.ok) {
+        await obtenerPlantas();
+        setAlertaVisible(false);
+      }
     } catch (error) {
       console.error("Error al eliminar:", error);
     }
@@ -96,7 +104,7 @@ export default function Crud() {
 
       <BaseTabla
         columnas={columnas}
-        datos={plantas || []}
+        datos={Array.isArray(plantas) ? plantas : []} 
         onEditar={(planta) => {
           setPlantaActual(planta);
           setModalVisible(true);
