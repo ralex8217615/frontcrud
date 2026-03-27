@@ -3,7 +3,7 @@ import BaseTabla from "../components/BaseTabla";
 import BaseModal from "../components/BaseModal";
 import BaseAlerta from "../components/BaseAlerta";
 
-const API = "http://localhost:3000/api/plantas";
+const API = "https://ultimo-nj94.onrender.com/api/plantas";
 
 export default function Crud() {
   const [plantas, setPlantas] = useState([]);
