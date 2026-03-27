@@ -1,4 +1,4 @@
-import Crud from "./pages/crud";
+import Crud from "./pages/Crud"; 
 
 function App() {
   return (
