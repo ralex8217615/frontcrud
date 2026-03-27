@@ -5,7 +5,7 @@ import {
   createPlanta,
   updatePlanta,
   deletePlanta
-} from "../controllers/plantas.controller.js";
+} from "../controllers/plantas.js";
 
 const router = express.Router();
 
